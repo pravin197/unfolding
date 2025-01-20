@@ -8,8 +8,6 @@ import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
-import processing.core.PApplet;
-import processing.core.PVector;
 import de.fhpotsdam.unfolding.events.MapEvent;
 import de.fhpotsdam.unfolding.events.MapEventListener;
 import de.fhpotsdam.unfolding.geo.Location;
@@ -21,6 +19,8 @@ import de.fhpotsdam.unfolding.providers.AbstractMapProvider;
 import de.fhpotsdam.unfolding.utils.GeoUtils;
 import de.fhpotsdam.unfolding.utils.ScreenPosition;
 import de.fhpotsdam.utils.Integrator;
+import processing.core.PApplet;
+import processing.core.PVector;
 
 /**
  * An interactive map. Uses the MapDisplay, and handles hit test, active status, as well as all interactions such as
@@ -33,7 +33,7 @@ import de.fhpotsdam.utils.Integrator;
  */
 public class UnfoldingMap implements MapEventListener {
 
-	public static final String GREETING_MESSAGE = "Unfolding Map v0.9.9beta";
+	public static final String GREETING_MESSAGE = "Unfolding Map v0.9.93";
 
 	public static final float SCALE_DELTA_IN = 1.05f;
 	public static final float SCALE_DELTA_OUT = 1 / 1.05f;
@@ -847,10 +847,36 @@ public class UnfoldingMap implements MapEventListener {
 		addOffset(dx, dy);
 	}
 
+	public void zoomAndPanToFitAllMarkers() {
+		zoomAndPanToFitMarkers(getMarkers());
+	}
+
+	/**
+	 * Zooms and pans the map so that all markers are within the view.
+	 * 
+	 * @param markers
+	 *            The markers to fit.
+	 */
+	public void zoomAndPanToFitMarkers(List<Marker> markers) {
+		zoomAndPanToFit(GeoUtils.getLocationsFromMarkers(markers));
+	}
+
+	/**
+	 * Zooms and pans the map so that the marker is within the view.
+	 * 
+	 * @param marker
+	 *            The marker to fit.
+	 */
 	public void zoomAndPanToFit(Marker marker) {
 		zoomAndPanToFit(GeoUtils.getLocations(marker));
 	}
 
+	/**
+	 * Zooms and pans the map so that all locations are within the view.
+	 * 
+	 * @param locations
+	 *            A list of locations to fit.
+	 */
 	public void zoomAndPanToFit(List<Location> locations) {
 		Location[] boundingBox = GeoUtils.getBoundingBox(locations);
 		List<Location> boundingBoxLocations = Arrays.asList(boundingBox);
@@ -922,6 +948,27 @@ public class UnfoldingMap implements MapEventListener {
 
 	public void removeMarkerManager(int i) {
 		mapDisplay.getMarkerManagerList().remove(i);
+	}
+
+	/**
+	 * Clears all markers from the map. (Removes markers from default and all other MarkerManagers.)
+	 */
+	public void clearAllMarkers() {
+		mapDisplay.clearAllMarkers();
+	}
+
+	/**
+	 * Removes one marker from the map.
+	 * 
+	 * The marker is removed only from the default MarkerManager. If using multiple MarkerManagers, you need to remove
+	 * the marker on your own.
+	 * 
+	 * @param marker
+	 *            The marker to remove.
+	 * @return Whether the default MarkerManager contained the given marker.
+	 */
+	public boolean removeMarker(Marker marker) {
+		return mapDisplay.getDefaultMarkerManager().removeMarker(marker);
 	}
 
 	/**

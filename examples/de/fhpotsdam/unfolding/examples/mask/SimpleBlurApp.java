@@ -1,13 +1,13 @@
 package de.fhpotsdam.unfolding.examples.mask;
 
-import processing.core.PApplet;
 import de.fhpotsdam.unfolding.UnfoldingMap;
 import de.fhpotsdam.unfolding.mapdisplay.OpenGLMapDisplay;
 import de.fhpotsdam.unfolding.mapdisplay.shaders.BlurredMapDisplayShader;
 import de.fhpotsdam.unfolding.utils.MapUtils;
+import processing.core.PApplet;
 
 /**
- * Map is shown inside a fuzzy circle. Uses an gray-scale image as map mask.
+ * Map is used with a (non-mask) shader. This blurs the map.
  */
 public class SimpleBlurApp extends PApplet {
 
@@ -15,8 +15,12 @@ public class SimpleBlurApp extends PApplet {
 
 	BlurredMapDisplayShader mapDisplayShader;
 
+	public void settings() {
+		size(800, 600, P3D);
+	}
+
 	public void setup() {
-		size(800, 600, OPENGL);
+		size(800, 600, P3D);
 		map = new UnfoldingMap(this, 100, 100, 600, 400);
 		MapUtils.createDefaultEventDispatcher(this, map);
 
@@ -27,6 +31,10 @@ public class SimpleBlurApp extends PApplet {
 	public void draw() {
 		background(0);
 		map.draw();
+	}
+
+	public static void main(String args[]) {
+		PApplet.main(new String[] { SimpleBlurApp.class.getName() });
 	}
 
 }
